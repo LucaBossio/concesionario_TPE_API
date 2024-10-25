@@ -12,8 +12,15 @@ class CarsModel{
 
     }
 
-    public function getCars($orderBy = false, $order = 0){
+    public function getCars($orderBy = false, $order = 0, $filterParams){
         $sql = 'SELECT * FROM vehiculos';
+        $where = $this->whereMaker($filterParams);
+        if (strlen($where[0])>7) {
+            $sql .= $where[0];
+        }else{
+            $where[1]=[];
+        }
+
 
         if($orderBy){
             switch ($orderBy) {
@@ -27,23 +34,56 @@ class CarsModel{
                     $sql .= ' ORDER BY marca';
                 break;
             }
-        }
         
-        switch ($order) {
-            case '0':
-                $sql .= ' DESC';
-            break;
-            case '1':
-                $sql .= ' ASC';
-            break;
+            switch ($order) {
+                case '0':
+                    $sql .= ' DESC';
+                break;
+                case '1':
+                    $sql .= ' ASC';
+                break;
+        }
         }
         $query = $this->db->prepare($sql);
-        $query->execute();
+        $query->execute($where[1]);
 
         $cars = $query->fetchAll(PDO::FETCH_OBJ);
         return $cars;
     }
 
+
+    public function whereMaker($filterParams){
+        $sql=' WHERE ';
+
+
+        $filterOptions = [
+         "marca" => "=",
+         "modelo" => "=", 
+         "año_min" => ">", 
+         "año_max" => "<",
+         "puertas_min" => ">",
+         "puertas_max" => "<", 
+         "hp_min" => ">", 
+         "hp_max" => "<",
+         "precio_min" => ">", 
+         "precio_max" => "<",
+         "categoria" => "=",
+         "id_distribuidor"=>"="
+        ];
+
+        $valueParams=[];
+
+        foreach ($filterOptions as $field => $operator) {
+            if (isset($filterParams->$field)) {
+                $column = str_replace(['_min', '_max'], '', $field);
+              
+                $sql .= " $column $operator ? AND";
+                $valueParams[] = $filterParams->$field;
+            }
+        }
+        $sql = rtrim($sql, "AND");
+        return [$sql, $valueParams];
+    }
     /*public function getCarsByDistributor($field, $distributor_id){
         $query = $this->db->prepare("SELECT * FROM vehiculos WHERE $field = ?");
         $query->execute([$distributor_id]);
@@ -59,8 +99,9 @@ class CarsModel{
         return $car;
     }
     
-    /*
+    
     public function addCar($marca,$modelo,$categoria,$anio,$puertas,$hp,$precio,$imagen,$idDis){
+
         $query = $this->db->prepare('INSERT INTO vehiculos( marca, modelo, año, puertas, hp, precio, id_distribuidor, categoria, img) VALUES (?,?,?,?,?,?,?,?,?)');
         $query->execute([$marca,$modelo,$anio,$puertas,$hp,$precio, $idDis ,$categoria,$imagen]);
 
@@ -69,7 +110,7 @@ class CarsModel{
         return $id;
 
     }
-
+/*
     public function deleteCar($id){
         $query = $this->db->prepare('DELETE FROM vehiculos WHERE id = ?');
         $query->execute([$id]);

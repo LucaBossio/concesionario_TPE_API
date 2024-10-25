@@ -27,7 +27,7 @@ class CarsController{
             $order = $req->query->order;
         }
 
-        $cars = $this->model->getCars($orderBy, $order);
+        $cars = $this->model->getCars($orderBy, $order, $req->query);
 
         if(!$cars){
             $this->view->response("No existen vehiculos", 404);
@@ -58,7 +58,6 @@ class CarsController{
         }
         $this->view->showCars($cars,$distributors);
     }
-    /*
     public function showCarForm($id = -1){
         if($id == -1){
             $destiny = 'add';
@@ -73,28 +72,36 @@ class CarsController{
         $this->view->showCarForm($car,$destiny,$distributors);
     }
 
-    /*
-    public function addCar(){
-        if(!isset($_POST['brand']) || !isset($_POST['model']) || !isset($_POST['categories']) || !isset($_POST['year']) || !isset($_POST['doors']) || !isset($_POST['power']) || !isset($_POST['car-price']) || !isset($_POST['image'])){
-            $this->view->showError('Falta completar campos');
+*/
+    public function addCar($req,$res){
+        
+        if(!isset($req->body->brand) || !isset($req->body->model) || !isset($req->body->categoria) || !isset($req->body->year) || !isset($req->body->doors) || !isset($req->body->power) || !isset($req->body->carPrice) || !isset($req->body->img)|| !isset($req->body->idDistributor) ){
+            $this->view->response('Falta completar campos', 400);
             return;
         }
 
-        $marca = $_POST['brand'];
-        $modelo = $_POST['model'];
-        $categoria = $_POST['categories'];
-        $anio = $_POST['year'];
-        $puertas = $_POST['doors'];
-        $hp = $_POST['power'];
-        $precio = $_POST['car-price'];
-        $idDis = $_POST['distributor'];
-        $imagen = $_POST['image'];
+        $marca = $req->body->brand;
+        $modelo = $req->body->model;
+        $categoria =$req->body->categoria;
+        $anio = $req->body->year;
+        $puertas = $req->body->doors;
+        $hp = $req->body->power;
+        $precio = $req->body->carPrice;
+        $idDis = $req->body->idDistributor;
+        $imagen = $req->body->img;
 
-        $this->model->addCar($marca,$modelo,$categoria,$anio,$puertas,$hp,$precio,$imagen,$idDis);
+        $id = $this->model->addCar($marca,$modelo,$categoria,$anio,$puertas,$hp,$precio,$imagen,$idDis);
         
-        header('Location:' . BASE_URL . 'vehicles/list');
+        if(!$id){
+           return $this->view->response('Error al insertar vehiculo', 500);
+        }
+
+        $car = $this->model->getCarByID($id);
+        return $this->view->response($car, 201);
     }
 
+
+    /*
     public function deleteCar($id){
         $car = $this->model->getCarByID($id);
 
