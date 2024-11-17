@@ -36,9 +36,9 @@ La api permite paginar los resultados, para esto se le tiene que enviar por para
 ## Ordenamiento
 por ultimo la api admite retornar los datos ordenados que el parametros `orderBy` y tambien se le puede pedir los datos acendentemente o decendentemente con el queryParam `order`.
 #### actuamente se puede ordenar por: 
-*`price`
-*`year`
-*`brand`
+* `price`
+* `year`
+* `brand`
 #### y ordenados de manera:
-*`DESC` de descendente 
-*`ASC` de acendenete
+* `DESC` de descendente 
+* `ASC` de acendenete
