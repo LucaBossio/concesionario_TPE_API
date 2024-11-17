@@ -41,10 +41,10 @@ class CarsModel{
             }
         
             switch ($order) {
-                case '0':
+                case 'DESC':
                     $sql .= ' DESC';
                 break;
-                case '1':
+                case 'ASC':
                     $sql .= ' ASC';
                 break;
         }
@@ -80,16 +80,16 @@ class CarsModel{
         $filterOptions = [
          "marca" => "=",
          "modelo" => "=", 
-         "año_min" => ">=", 
-         "año_max" => "<=",
-         "puertas_min" => ">=",
-         "puertas_max" => "<=", 
-         "hp_min" => ">=", 
-         "hp_max" => "<=",
-         "precio_min" => ">=", 
-         "precio_max" => "<=",
-         "categoria" => "=",
-         "id_distribuidor"=>"="
+         "year_min" => ">=", 
+         "year_max" => "<=",
+         "doors_min" => ">=",
+         "doors_max" => "<=", 
+         "power_min" => ">=", 
+         "power_max" => "<=",
+         "price_min" => ">=", 
+         "price_max" => "<=",
+         "category" => "=",
+         "id_distributor"=>"="
         ];
 
         $valueParams=[];

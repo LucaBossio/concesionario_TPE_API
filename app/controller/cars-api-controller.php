@@ -54,15 +54,15 @@ class CarsController{
 
     public function checkRightParmas($paramas){
         $fields = [  
-            "año_min" , 
-            "año_max" ,
-            "puertas_min" ,
-            "puertas_max" , 
-            "hp_min" ,
-            "hp_max" ,
-            "precio_min" , 
-            "precio_max" ,
-            "id_distribuidor",
+            "year_min" , 
+            "year_max" ,
+            "doors_min" ,
+            "doors_max" , 
+            "power_min" ,
+            "power_max" ,
+            "price_min" , 
+            "price_max" ,
+            "id_distributor",
             "limit",
             "page"
            ];
@@ -161,7 +161,7 @@ class CarsController{
 
         $marca = $req->body->brand;
         $modelo = $req->body->model;
-        $categoria =$req->body->categoria;
+        $categoria =$req->body->category;
         $anio = $req->body->year;
         $puertas = $req->body->doors;
         $hp = $req->body->power;
