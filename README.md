@@ -42,3 +42,5 @@ por ultimo la api admite retornar los datos ordenados que el parametros `orderBy
 #### y ordenados de manera:
 * `DESC` de descendente 
 * `ASC` de acendenete
+#### Ejemplo de uso
+`/api/vehicles?orderBy=price&order=DESC`
