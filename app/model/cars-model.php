@@ -13,12 +13,17 @@ class CarsModel{
     }
 
     public function getCars($orderBy = false, $order = 0, $filterParams){
+
+
         $sql = 'SELECT * FROM vehiculos';
-        $where = $this->whereMaker($filterParams);
-        if (strlen($where[0])>7) {
-            $sql .= $where[0];
-        }else{
-            $where[1]=[];
+        $conditions = $this->_filtering($filterParams);
+        $pagaination = $this->_pagination($filterParams);
+
+        if (!empty($conditions[1])) {
+            $sql .= $conditions[0];
+        }
+        if ( !empty($pagaination)) {
+            $sql .= $pagaination[0];
         }
 
 
@@ -45,28 +50,44 @@ class CarsModel{
         }
         }
         $query = $this->db->prepare($sql);
-        $query->execute($where[1]);
+
+        $query->execute($conditions[1]);
 
         $cars = $query->fetchAll(PDO::FETCH_OBJ);
+
         return $cars;
     }
 
+    
+    public function totalVehicles($filterParams){
+        $sql = 'SELECT COUNT(*) as total FROM vehiculos'; 
+        $conditions = $this->_filtering($filterParams);
 
-    public function whereMaker($filterParams){
+        if (!empty($conditions[0])) {
+            $sql .= $conditions[0];
+        }
+    
+        $queryCount = $this->db->prepare($sql);
+        $queryCount->execute($conditions[1]);
+        $total = $queryCount->fetch(PDO::FETCH_OBJ)->total;
+        return $total;
+    }
+
+
+    private function _filtering($filterParams){
         $sql=' WHERE ';
-
 
         $filterOptions = [
          "marca" => "=",
          "modelo" => "=", 
-         "año_min" => ">", 
-         "año_max" => "<",
-         "puertas_min" => ">",
-         "puertas_max" => "<", 
-         "hp_min" => ">", 
-         "hp_max" => "<",
-         "precio_min" => ">", 
-         "precio_max" => "<",
+         "año_min" => ">=", 
+         "año_max" => "<=",
+         "puertas_min" => ">=",
+         "puertas_max" => "<=", 
+         "hp_min" => ">=", 
+         "hp_max" => "<=",
+         "precio_min" => ">=", 
+         "precio_max" => "<=",
          "categoria" => "=",
          "id_distribuidor"=>"="
         ];
@@ -81,15 +102,31 @@ class CarsModel{
                 $valueParams[] = $filterParams->$field;
             }
         }
+
         $sql = rtrim($sql, "AND");
+
+        if (strlen($sql) == 7) {
+           return ["",[]];
+        }
+
         return [$sql, $valueParams];
     }
-    /*public function getCarsByDistributor($field, $distributor_id){
-        $query = $this->db->prepare("SELECT * FROM vehiculos WHERE $field = ?");
-        $query->execute([$distributor_id]);
-        $cars = $query->fetchAll(PDO::FETCH_OBJ);
-        return $cars;
-    }*/
+
+    private function _pagination($filterParams){
+
+        if (!isset($filterParams->limit) && !isset($filterParams->cantPage)) {
+            return [];
+        }
+
+        $limit =  $filterParams->limit;
+        $page = ( $filterParams->page > 0) ?  $filterParams->page : 1 ;
+        $offset = $limit * ($page - 1);
+    
+        $sql = " LIMIT $limit OFFSET $offset ";
+
+        return [$sql];
+    }
+
 
     public function getCarByID($id){
         $query = $this->db->prepare('SELECT * FROM vehiculos WHERE id = ?');
@@ -100,29 +137,21 @@ class CarsModel{
     }
     
     
-    public function addCar($marca,$modelo,$categoria,$anio,$puertas,$hp,$precio,$imagen,$idDis){
+    public function addCar($info){
 
         $query = $this->db->prepare('INSERT INTO vehiculos( marca, modelo, año, puertas, hp, precio, id_distribuidor, categoria, img) VALUES (?,?,?,?,?,?,?,?,?)');
-        $query->execute([$marca,$modelo,$anio,$puertas,$hp,$precio, $idDis ,$categoria,$imagen]);
+        $query->execute($info);
 
         $id = $this->db->lastInsertId();
     
         return $id;
 
     }
-/*
-    public function deleteCar($id){
-        $query = $this->db->prepare('DELETE FROM vehiculos WHERE id = ?');
-        $query->execute([$id]);
-
-
-    }
-
-    */
-    public function updateCar($marca,$modelo,$categoria,$anio,$puertas,$hp,$precio,$id,$idDis,$imagen){
+    public function updateCar($info){
         $query = $this->db->prepare("UPDATE vehiculos SET marca = ?, modelo = ?, precio = ?, año = ?, puertas = ?, hp = ?, id_distribuidor = ?, categoria = ?, img = ? WHERE id = ?");
-        $query->execute([$marca,$modelo,$precio,$anio,$puertas,$hp,$idDis,$categoria,$imagen,$id]);
+        $query->execute($info);
     }
+
 
 
 }

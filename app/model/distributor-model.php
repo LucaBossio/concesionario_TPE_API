@@ -12,12 +12,12 @@ class DistributorModel{
 
     }
 
-    public function getDistributors(){
-        $query = $this->db->prepare('SELECT * FROM `distribuidor`'); 
-        $query->execute();
-        $distributors = $query->fetchAll(PDO::FETCH_OBJ);
-        return $distributors;
-    }
+    // public function getDistributors(){
+    //     $query = $this->db->prepare('SELECT * FROM `distribuidor`'); 
+    //     $query->execute();
+    //     $distributors = $query->fetchAll(PDO::FETCH_OBJ);
+    //     return $distributors;
+    // }
 
     public function getDistributorByID($id){
         $query = $this->db->prepare('SELECT * FROM `distribuidor` WHERE id = ?'); 
@@ -27,19 +27,19 @@ class DistributorModel{
     }
 
 
-    public function setDistributor($nombre, $telefono, $empresa, $img){
-        $query=$this->db->prepare('INSERT INTO `distribuidor`(`nombre`, `telefono`, `empresa`, `img`) VALUES (?,?,?,?)');
-        $query->execute([$nombre, $telefono, $empresa, $img]);
-    }
+    // public function setDistributor($nombre, $telefono, $empresa, $img){
+    //     $query=$this->db->prepare('INSERT INTO `distribuidor`(`nombre`, `telefono`, `empresa`, `img`) VALUES (?,?,?,?)');
+    //     $query->execute([$nombre, $telefono, $empresa, $img]);
+    // }
 
-    public function updateDistributor($nombre, $telefono, $empresa, $img, $id){	
-        $query=$this->db->prepare('UPDATE `distribuidor` SET nombre = ?, telefono = ?, empresa = ?, img = ? WHERE id = ?');
-        $query->execute([$nombre, $telefono, $empresa, $img, $id]);
-    }
+    // public function updateDistributor($nombre, $telefono, $empresa, $img, $id){	
+    //     $query=$this->db->prepare('UPDATE `distribuidor` SET nombre = ?, telefono = ?, empresa = ?, img = ? WHERE id = ?');
+    //     $query->execute([$nombre, $telefono, $empresa, $img, $id]);
+    // }
 
-    public function deleteDistributor($id){
-        $query = $this->db->prepare('DELETE FROM `distribuidor` WHERE id = ?'); 
-        $query->execute([$id]);
-    }
+    // public function deleteDistributor($id){
+    //     $query = $this->db->prepare('DELETE FROM `distribuidor` WHERE id = ?'); 
+    //     $query->execute([$id]);
+    // }
 
 }

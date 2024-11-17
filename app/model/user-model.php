@@ -2,7 +2,7 @@
 require_once './libs/config.php';
 require_once './libs/deploy.php';
 
-class AuthModel{
+class UserModel{
     private $db;
 
     public function __construct(){
