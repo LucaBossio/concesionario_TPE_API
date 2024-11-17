@@ -22,7 +22,6 @@ class CarsController{
         $orderBy = false;
         if(isset($req->query->orderBy))
             $orderBy = $req->query->orderBy;
-        
 
         $order = 0;
         if(isset($req->query->order))
@@ -31,52 +30,38 @@ class CarsController{
         if(!$this->checkRightParmas($req->query))
             return $this->view->response("Parametros no adecuados", 400); 
 
-        if(isset($req->query->limit))
-            $limit = $req->query->limit;
-            $page = $req->query->page;
-            if ((($limit <= 0) || $page <1 ) || (($limit * ($page-1)) >= $this->modelCar->totalVehicles($req->query) )) {
-                return $this->view->response("", 204);
-            
-        }
+        if(isset($req->query->limit) && ($req->query->limit <= 0 || $req->query->page < 1 ))
+            return $this->view->response("Parametros de paginacion no validos", 400);
         
-
-
         $cars = $this->modelCar->getCars($orderBy, $order, $req->query);
-
-        if(!$cars)
-            return $this->view->response("No existen vehiculos", 404);
             
-      
-
         return $this->view->response($cars);
     }
 
 
     public function checkRightParmas($paramas){
         $fields = [  
-            "year_min" , 
-            "year_max" ,
-            "doors_min" ,
-            "doors_max" , 
-            "power_min" ,
-            "power_max" ,
-            "price_min" , 
-            "price_max" ,
-            "id_distributor",
+            "año_min" , 
+            "año_max" ,
+            "puertas_min" ,
+            "puertas_max" , 
+            "hp_min" ,
+            "hp_max" ,
+            "precio_min" , 
+            "precio_max" ,
+            "id_distribuidor",
             "limit",
             "page"
            ];
 
            foreach ($fields as $param => $value) {
-
-                if (!isset($paramas->$value) ) {
+                if (!isset($paramas->$value) ) 
                     continue;
-                }
+                
                 $val = $paramas->$value;
 
-                if ((!is_numeric($val) || ( $val < 0))) {
+                if ((!is_numeric($val) || ( $val < 0))) 
                     return false; 
-                }
            }
 
            return true;
@@ -90,7 +75,6 @@ class CarsController{
         if(!$car)
             return $this->view->response("No existe el vehiculo", 404);
         
-
         return $this->view->response($car);
     }
 
@@ -100,19 +84,14 @@ class CarsController{
         if(!$res->user) 
             return $this->view->response("No autorizado", 401);
         
-
         $info = $this->validateInfo($req);
-
         if ($info == null) 
             return $this->view->response('Datos incompatibles o faltantes', 400);
     
-
         $id = $this->modelCar->addCar($info);
-        
         if(!$id)
            return $this->view->response('Error al insertar vehiculo', 500);
         
-
         $car = $this->modelCar->getCarByID($id);
         return $this->view->response($car, 201);
     }
@@ -120,21 +99,18 @@ class CarsController{
 
 
     public function update($req,$res){
-        if(!$res->user) {
+        if(!$res->user) 
             return $this->view->response("No autorizado", 401);
-        }
-
+        
         $id = $req->params->id;
-
         $car = $this->modelCar->getCarByID($id);
 
-        if(!$car){
-            $this->view->response("No existe el vehiculo", 404);
-            return;
-        }
-
+        if(!$car)
+            return$this->view->response("No existe el vehiculo", 404);
+        
         $info = $this->validateInfo($req);
-        if ($info == null) return $this->view->response('Datos incompatibles o faltantes', 400);
+        if ($info == null) 
+            return $this->view->response('Datos incompatibles o faltantes', 400);
 
         $this->modelCar->updateCar($info);
         
@@ -151,25 +127,25 @@ class CarsController{
 
     public function validateInfo($req){
          
-        if(!isset($req->body->brand) || !isset($req->body->model) || !isset($req->body->category) || !isset($req->body->year) || !isset($req->body->doors) || !isset($req->body->power) || !isset($req->body->carPrice) || !isset($req->body->img)|| !isset($req->body->idDistributor) ){
+        if(!isset($req->body->marca) || !isset($req->body->modelo) || !isset($req->body->categoria) || !isset($req->body->año) || !isset($req->body->puertas) || !isset($req->body->hp) || !isset($req->body->precio) || !isset($req->body->img)|| !isset($req->body->id_distribuidor) )
             return null;
-        } 
+        
 
-        if ($this->existeDist($req->body->idDistributor) == null) {
+        if ($this->existeDist($req->body->id_distribuidor) == null) 
             return null;
-        }
+        
 
-        $marca = $req->body->brand;
-        $modelo = $req->body->model;
-        $categoria =$req->body->category;
-        $anio = $req->body->year;
-        $puertas = $req->body->doors;
-        $hp = $req->body->power;
-        $precio = $req->body->carPrice;
-        $idDis = $req->body->idDistributor;
+        $marca = $req->body->marca;
+        $modelo = $req->body->modelo;
+        $categoria =$req->body->categoria;
+        $anio = $req->body->año;
+        $puertas = $req->body->puertas;
+        $hp = $req->body->hp;
+        $precio = $req->body->precio;
+        $idDis = $req->body->id_distribuidor;
         $imagen = $req->body->img;
 
-        return ([$marca, $modelo, $categoria, $anio,$puertas, $hp,$precio,  $idDis, $imagen]);
+        return ([$marca, $modelo, $categoria, $anio,$puertas, $hp,$precio, $idDis, $imagen]);
     }
 
 

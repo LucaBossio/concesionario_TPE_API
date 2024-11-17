@@ -1,4 +1,6 @@
 <?php
+
+require_once './libs/config.php';
 function createJWT($payload){
     $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
     $payload = json_encode($payload);
@@ -8,7 +10,7 @@ function createJWT($payload){
     $payload = base64_encode($payload);
     $payload = str_replace(['+', '/', '='], ['-', '_', ''], $payload);
 
-    $signature = hash_hmac('sha256', $header . "." . $payload, 'mi1secreto', true);
+    $signature = hash_hmac('sha256', $header . "." . $payload, SECRET, true);
     $signature = base64_encode($signature);
     $signature = str_replace(['+', '/', '='], ['-', '_', ''], $signature);
 
@@ -25,7 +27,7 @@ function validateJWT($jwt){
        $payload = $jwt[1];
        $signature = $jwt[2];
 
-       $valid_signature = hash_hmac('sha256', $header . "." . $payload, 'mi1secreto', true);
+       $valid_signature = hash_hmac('sha256', $header . "." . $payload, SECRET, true);
        $valid_signature = base64_encode($valid_signature);
        $valid_signature = str_replace(['+', '/', '='], ['-', '_', ''], $valid_signature);
 
