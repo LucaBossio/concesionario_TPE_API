@@ -139,7 +139,7 @@ class CarsModel{
     }
 
     public function updateCar($info){
-        $query = $this->db->prepare("UPDATE vehiculos SET marca = ?, modelo = ?, precio = ?, año = ?, puertas = ?, hp = ?, id_distribuidor = ?, categoria = ?, img = ? WHERE id = ?");
+        $query = $this->db->prepare("UPDATE vehiculos SET marca = ?, modelo = ?, año = ?, puertas = ?, hp = ?, precio = ?, id_distribuidor = ?, categoria = ?, img = ? WHERE id = ?");
         $query->execute($info);
     }
 

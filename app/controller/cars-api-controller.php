@@ -109,9 +109,11 @@ class CarsController{
             return$this->view->response("No existe el vehiculo", 404);
         
         $info = $this->validateInfo($req);
+        
         if ($info == null) 
             return $this->view->response('Datos incompatibles o faltantes', 400);
 
+        $info[]=$id;
         $this->modelCar->updateCar($info);
         
         $car = $this->modelCar->getCarByID($id);
@@ -145,7 +147,7 @@ class CarsController{
         $idDis = $req->body->id_distribuidor;
         $imagen = $req->body->img;
 
-        return ([$marca, $modelo, $categoria, $anio,$puertas, $hp,$precio, $idDis, $imagen]);
+        return ([$marca, $modelo, $anio,$puertas, $hp,$precio, $idDis,$categoria,$imagen]);
     }
 
 
